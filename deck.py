@@ -20,10 +20,17 @@ class Deck:
 		random.shuffle(self.cards)
 		self.ctr = 0
 
+
 class Card:
+
 	def __init__(self, suit, value):
 		self.suit = suit
 		self.value = value
 
 	def getNumericalValue(self):
-		return # TODO
+		if self.value in ['J', 'Q', 'K', 'A']:
+			return 10
+		return int(self.value)
+
+	def __str__(self):
+		return "%s%s" % (self.value, self.suit)
