@@ -10,7 +10,7 @@ class Table:
 		return self.players[playerId]
 
 	def dealCard(self, playerId):
-		print(self.dealer.dealCard(playerId))
+		return self.dealer.dealCard(playerId)
 
 class Dealer:
 	
@@ -34,7 +34,7 @@ class Player:
 
 	def computeHandValue(self):
 		if self.hand:
-			return sum([card.getNumericalValue() for card in self.hand])
+			return min(sum([card.getNumericalValue() for card in self.hand]), 21)
 		return 0
 
 	def addCard(self, card):
