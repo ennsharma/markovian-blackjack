@@ -28,8 +28,10 @@ class Card:
 		self.value = value
 
 	def getNumericalValue(self):
-		if self.value in ['J', 'Q', 'K', 'A']:
-			return 10 
+		if self.value in ['J', 'Q', 'K']:
+			return 10
+		if self.value == 'A':
+			return (1,11)
 		# TODO: Encode ace as 1 or 11
 		return int(self.value)
 
