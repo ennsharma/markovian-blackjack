@@ -4,22 +4,39 @@ import numpy as np
 
 class MarkovSimulator:
 
+	def updateDealingVals(self, currValues):
+		updateVals = []
+		for val in currValues:
+			if val < 22:
+				updateVals.append(val)
+
+		return updateVals
+
+
 	def runSimulation(self):
 		table = blackjack.Table(numPlayers=1)
 		player = table.getPlayer(0)
-		states = []
+		states_freq = {}
 
 		# Deal 2 initial cards to the player
 		table.dealCard(0)
 		table.dealCard(0)
 
 		# Deal cards until bust, enumerating states
-		currValue = player.computeHandValue()
-		while currValue < 22:
-			states.append(currValue)
+		currValues = self.updateDealingVals(player.computeHandValue())
+		while len(currValues) > 0:
+			for val in currValues:
+				if val not in states_freq:
+					states_freq[val] = 1
+				else:
+					states_freq[val] += 1
+
 			table.dealCard(0)
-			currValue = player.computeHandValue()
-		return states
+			currValues = self.updateDealingVals(player.computeHandValue())
+
+		#print(str(player), player.computeHandValue())
+		print(str(player), states_freq)
+		return states_freq, player.getAceNum()
 
 	def runNSimulations(self, N):
 		stateCounts = {i : 0 for i in range(22)}
@@ -33,12 +50,15 @@ class MarkovSimulator:
 		for i in range(N):
 			prev = 0
 			curr = 0
-			for state in self.runSimulation():
-				stateCounts[state] += 1
+			states_freq, ace_num = self.runSimulation()
+			sorted_states = sorted(states_freq.keys())
+			for state in sorted_states:
+				stateCounts[state] += states_freq[state]
 				curr = state
-				transitionCounts[prev][curr] += 1
+				transitionCounts[prev][curr] += states_freq[state]
 				prev = curr
-			transitionCounts[prev][22] += 1
+			transitionCounts[prev][22] += (2^ace_num)
+			#print(transitionCounts)
 
 		return stateCounts, transitionCounts
 

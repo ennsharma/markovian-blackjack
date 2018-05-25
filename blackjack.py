@@ -32,9 +32,17 @@ class Player:
 		self.hand = []
 		self.id = playerId
 
+	def getAceNum(self):
+		count = 0
+		for card in self.hand:
+			if card.value == 'A':
+				count += 1
+
+		return count
+
 	def computeHand(self, currHand, currValue):
-		if len(currHand) == 0 or currValue >= 22:
-			return currValue
+		if len(currHand) == 0:
+			return [currValue]
 		card = currHand[0]
 		remainHand = []
 		if len(currHand) > 1:
@@ -44,12 +52,14 @@ class Player:
 			a1 = self.computeHand(remainHand, currValue+card.getNumericalValue()[0])
 			a11 = self.computeHand(remainHand, currValue+card.getNumericalValue()[1])
 
-			hand1 = min(a1, 22)
-			hand2 = min(a11, 22)
+			vals = []
+			for i in range(len(a1)):
+				vals.append(a1[i])
 
-			if hand1 == 22 or hand2 == 22:
-				return min(hand1, hand2)
-			return max(hand1, hand2)
+			for j in range(len(a11)):
+				vals.append(a11[j])
+
+			return vals
 
 		return self.computeHand(remainHand, currValue + card.getNumericalValue())
 	
@@ -59,4 +69,10 @@ class Player:
 
 	def addCard(self, card):
 		self.hand.append(card)
+
+	def __str__(self):
+		print_hand = []
+		for card in self.hand:
+			print_hand.append(card.value)
+		return " ".join(print_hand)
 
